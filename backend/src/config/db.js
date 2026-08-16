@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { User } from "../models/User.js";
 import { Job } from "../models/Job.js";
+import { Candidate } from "../models/Candidate.js";
 import { AuditLog } from "../models/AuditLog.js";
 import { SEED_USERS, SEED_JOBS, SEED_AUDIT_LOGS } from "../data/seed.js";
 
@@ -32,6 +33,26 @@ export async function connectDB() {
       console.log("✅ Initial jobs seeded into MongoDB.");
     }
 
+    // Auto-seed standalone candidates if collection is empty
+    const candCount = await Candidate.countDocuments();
+    if (candCount === 0) {
+      console.log("🌱 Seeding initial MongoDB candidates...");
+      const candList = [];
+      SEED_JOBS.forEach(j => {
+        j.candidates.forEach(c => {
+          candList.push({
+            ...c,
+            jobId: j.id,
+            jobTitle: j.title,
+          });
+        });
+      });
+      if (candList.length > 0) {
+        await Candidate.insertMany(candList);
+        console.log(`✅ ${candList.length} candidates seeded into MongoDB candidates collection.`);
+      }
+    }
+
     // Auto-seed initial audit logs if collection is empty
     const logCount = await AuditLog.countDocuments();
     if (logCount === 0) {
@@ -42,6 +63,5 @@ export async function connectDB() {
 
   } catch (err) {
     console.error("❌ MongoDB connection error:", err.message);
-    // Graceful fallback for offline mode
   }
 }

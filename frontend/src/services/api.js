@@ -49,6 +49,8 @@ export const api = {
   updateJobStatus: (id, status) => request(`/jobs/${id}/status`, { method: "PATCH", body: { status } }),
 
   // Candidates / applications
+  listCandidates: () => request("/candidates", { auth: false }),
+  listCandidatesByEmail: (email) => request(`/candidates/by-email/${encodeURIComponent(email)}`, { auth: false }),
   applyToJob: (jobId, payload) => request(`/jobs/${jobId}/apply`, { method: "POST", body: payload }),
   withdrawApplication: (jobId, email) =>
     request(`/jobs/${jobId}/candidates/by-email/${encodeURIComponent(email)}`, { method: "DELETE" }),

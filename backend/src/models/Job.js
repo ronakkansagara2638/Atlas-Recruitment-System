@@ -43,7 +43,7 @@ const candidateSchema = new mongoose.Schema(
 
 candidateSchema.set("toJSON", {
   transform: (doc, ret) => {
-    ret.id = ret.candidateId || ret._id.toString();
+    ret.id = ret.candidateId || ret._id?.toString();
     delete ret._id;
     return ret;
   },
@@ -51,11 +51,14 @@ candidateSchema.set("toJSON", {
 
 const jobSchema = new mongoose.Schema(
   {
+    id: { type: String, index: true },
     title: { type: String, required: true },
+    company: { type: String, default: "Atlas Technologies" },
     department: { type: String, required: true },
     location: { type: String, required: true },
     type: { type: String, default: "Full-Time" },
     level: { type: String, default: "Mid-Senior" },
+    salaryRange: { type: String, default: "$120,000 - $150,000" },
     salary: { type: String, default: "$120,000 - $150,000" },
     description: { type: String, required: true },
     requirements: [{ type: String }],
@@ -72,7 +75,7 @@ const jobSchema = new mongoose.Schema(
 
 jobSchema.set("toJSON", {
   transform: (doc, ret) => {
-    ret.id = ret._id.toString();
+    ret.id = ret.id || ret._id?.toString();
     delete ret._id;
     delete ret.__v;
     return ret;

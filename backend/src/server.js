@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import jobRoutes from "./routes/jobs.js";
+import candidateRoutes from "./routes/candidates.js";
 import auditLogRoutes from "./routes/auditLogs.js";
 import { connectDB } from "./config/db.js";
 
@@ -24,6 +25,7 @@ app.get("/api/health", (req, res) => res.json({ status: "ok", database: "MongoDB
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/candidates", candidateRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
 
 // 404 handler
