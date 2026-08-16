@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --ink: #14161F;
+  --ink-soft: #4A4E5C;
+  --muted: #82869A;
+  --muted2: #7B7F8D;
+  --paper: #F2F3F7;
+  --surface: #FFFFFF;
+  --border: #E3E4EB;
+  --border-strong: #CBCDD9;
+  --primary: #34368E;
+  --primary-dark: #22235E;
+  --primary-soft: #EDEDF9;
+  --accent: #C8842C;
+  --accent-soft: #FBF1E1;
+  --success: #0F7A6B;
+  --success-soft: #E4F5F1;
+  --danger: #BE3D3D;
+  --danger-soft: #FBEAEA;
+  --info: #2E6FB0;
+  --info-soft: #E9F1FA;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.atlas-root {
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.atlas-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.atlas-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+}
+
+.atlas-fade-in {
+  animation: atlasFadeIn .28s ease both;
+}
+
+@keyframes atlasFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.atlas-focus:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.atlas-spin {
+  animation: atlasSpin .8s linear infinite;
+  display: inline-flex;
+}
+
+@keyframes atlasSpin {
+  to { transform: rotate(360deg); }
+}
