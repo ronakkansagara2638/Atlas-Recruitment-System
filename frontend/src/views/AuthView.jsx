@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Briefcase, Shield, Users, User, Lock, Mail, Eye, EyeOff, CheckCircle2, ArrowRight, AlertCircle, Sparkles } from "lucide-react";
 import { useStore } from "../context/StoreContext";
 import { MASTER_ADMIN } from "../constants/recruitmentData";
+import { api, setToken } from "../services/api";
 
 export function AuthView() {
   const { state, dispatch } = useStore();
@@ -54,7 +55,7 @@ export function AuthView() {
     dispatch({ type: "LOGIN", user: matchedUser });
   };
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setSignupError("");
 
@@ -97,15 +98,26 @@ export function AuthView() {
       return;
     }
 
-    dispatch({
-      type: "SIGNUP",
-      userData: {
-        name: signupName.trim(),
-        email: emailClean,
-        password: signupPassword,
-        role: "candidate", // Strictly candidate for public signup
-      },
-    });
+    const candidatePayload = {
+      name: signupName.trim(),
+      email: emailClean,
+      password: signupPassword,
+      role: "candidate",
+    };
+
+    try {
+      const res = await api.register(candidatePayload);
+      if (res.token) setToken(res.token);
+      dispatch({
+        type: "SIGNUP",
+        userData: res.user || candidatePayload,
+      });
+    } catch (err) {
+      dispatch({
+        type: "SIGNUP",
+        userData: candidatePayload,
+      });
+    }
   };
 
   return (
