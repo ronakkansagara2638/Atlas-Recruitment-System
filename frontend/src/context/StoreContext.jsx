@@ -198,18 +198,14 @@ export function reducer(state, action) {
       const targetJob = state.jobs.find(j => j.id === action.jobId);
       if (!targetJob) return state;
 
-      const applicantEmail = action.candidate?.email || action.applicantEmail || state.user?.email || "candidate@atlas.hrms";
+      const applicantEmail = (action.candidate?.email || action.applicantEmail || state.user?.email || "candidate@atlas.hrms").toLowerCase();
       const applicantName = action.candidate?.name || action.applicantName || state.user?.name || "Alex Rivera";
 
-      // Check duplicate application
-      const already = targetJob.candidates.some(c => c.email.toLowerCase() === applicantEmail.toLowerCase());
-      if (already) {
-        return { ...state, toast: { kind: "info", msg: `You have already applied for ${targetJob.title}.` } };
-      }
+      const alreadyIdx = targetJob.candidates.findIndex(c => c.email.toLowerCase() === applicantEmail);
 
       let newCand;
       if (action.candidate) {
-        newCand = action.candidate;
+        newCand = { ...action.candidate, email: applicantEmail, isSessionCandidate: true };
       } else {
         const skills = action.skills || targetJob.requirements || ["React", "JavaScript", "HTML/CSS"];
         const atsResult = calculateAtsScore({ skills, experienceYears: action.expYears || 4, education: action.education || "B.S. Computer Science" }, targetJob.requirements);
@@ -221,13 +217,22 @@ export function reducer(state, action) {
           summary: action.summary || `${applicantName} submitted application with resume.`,
           resumeFileName: action.resumeFileName || "Resume_Document.pdf",
           reqs: targetJob.requirements,
+          isSessionCandidate: true,
         });
+      }
+
+      let updatedCandidates;
+      if (alreadyIdx >= 0) {
+        updatedCandidates = [...targetJob.candidates];
+        updatedCandidates[alreadyIdx] = { ...updatedCandidates[alreadyIdx], ...newCand };
+      } else {
+        updatedCandidates = [newCand, ...targetJob.candidates];
       }
 
       return {
         ...state,
         jobs: state.jobs.map(j => j.id === action.jobId
-          ? { ...j, candidates: [newCand, ...j.candidates] }
+          ? { ...j, candidates: updatedCandidates }
           : j),
         toast: { kind: "success", msg: `🎉 Application submitted for ${targetJob.title}! Match score: ${newCand.score || 90}%` },
       };

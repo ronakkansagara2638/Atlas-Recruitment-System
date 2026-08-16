@@ -9,10 +9,14 @@ export function CandidateDashboardView({ setView }) {
 
   const currentUser = state.user || { name: "Candidate", email: "candidate@atlas.hrms" };
 
-  // Find candidate applications across all jobs matching candidate email
+  // Find candidate applications across all jobs matching candidate email or name
   const myApplications = state.jobs.flatMap(j => 
     j.candidates
-      .filter(c => c.email.toLowerCase() === currentUser.email.toLowerCase())
+      .filter(c => 
+        (c.email && currentUser.email && c.email.toLowerCase() === currentUser.email.toLowerCase()) ||
+        (c.name && currentUser.name && c.name.toLowerCase() === currentUser.name.toLowerCase()) ||
+        c.isSessionCandidate
+      )
       .map(c => ({ ...c, jobTitle: j.title, company: j.company, department: j.department, jobId: j.id }))
   );
 

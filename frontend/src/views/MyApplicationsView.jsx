@@ -8,8 +8,16 @@ import { STAGE_STYLE } from "../constants/recruitmentData";
 export function MyApplicationsView() {
   const { state } = useStore();
   const myEmail = (state.user?.email || "").toLowerCase();
+  const myName = (state.user?.name || "").toLowerCase();
   const mine = state.jobs
-    .map(j => ({ job: j, candidate: j.candidates.find(c => c.email.toLowerCase() === myEmail) }))
+    .map(j => ({
+      job: j,
+      candidate: j.candidates.find(c =>
+        (c.email && myEmail && c.email.toLowerCase() === myEmail) ||
+        (c.name && myName && c.name.toLowerCase() === myName) ||
+        c.isSessionCandidate
+      )
+    }))
     .filter(x => x.candidate);
 
   return (
